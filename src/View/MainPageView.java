@@ -1,6 +1,8 @@
 	package View;
 
 import java.awt.EventQueue;
+import org.mindrot.jbcrypt.BCrypt;
+
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,6 +22,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
 import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -57,8 +64,9 @@ import java.awt.List;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import model.*;
+
 import javax.swing.JPasswordField;
-public class MainPageView extends JFrame {
+public class MainPageView extends JFrame implements Runnable{
    employee employee = new employee();
 	private JPanel contentPane;
 	
@@ -66,7 +74,7 @@ public class MainPageView extends JFrame {
 	private JTextField tfnamecus;
 	private JTextField tfphonecus;
 	private JTextField tfemailcus;
-	private JTextField tfusernamelogin;
+	private static JTextField tfusernamelogin;
 	private  JCheckBox cbdesignbanner;
 	private  JCheckBox cbdesignposter;
 	private JCheckBox cbdesignlogo;
@@ -75,19 +83,39 @@ public class MainPageView extends JFrame {
 	private JCheckBox cbeditservice ;
 	private String billcustomeruse;
 	private JTextArea textArea;
+	private static Socket socket;
+	public static JTextField getTfusernamelogin() {
+		return tfusernamelogin;
+	}
+
+	public void setTfusernamelogin(JTextField tfusernamelogin) {
+		this.tfusernamelogin = tfusernamelogin;
+	}
+
+	public static JPasswordField getTfpasswordlogin() {
+		return tfpasswordlogin;
+	}
+
+	public void setTfpasswordlogin(JPasswordField tfpasswordlogin) {
+		this.tfpasswordlogin = tfpasswordlogin;
+	}
+
+	private static BufferedReader reader;
+	private static BufferedWriter writer;
+	
 	
 	DefaultTableModel dtmnewstb = new DefaultTableModel();
 	LostPassword lpw = new LostPassword();
 	AdminPN admpn = new AdminPN();
-	EmployeePN emppn = new EmployeePN();
+	static EmployeePN emppn = new EmployeePN();
 	dbcontroller con  = new dbcontroller();
 	framedisparch fd = new framedisparch();
 employee em = new employee();
-private JPasswordField tfpasswordlogin;
+private static JPasswordField tfpasswordlogin;
 	/**
 	 * Launch the application.
 	 */
-	
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -96,17 +124,53 @@ private JPasswordField tfpasswordlogin;
 					MainPageView frame = new MainPageView();
 					
 					frame.setVisible(true);
+					 try {
+				            socket = new Socket("localhost", 1234);
+				            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+				            MessageReceiver messageReceiver = new MessageReceiver();
+				            
+				            messageReceiver.start();
+				         
+
+				        } catch (Exception e) {
+				            e.printStackTrace();
+				        }
+					 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
+			   class MessageReceiver extends Thread {
+			        public void run() {
+			            try {
+			                String message;
+			                while ((message = reader.readLine()) != null) {
+			                   emppn.getTxtarearequest().append(message + "\n");
+			                }
+			            } catch (Exception e) {
+			                e.printStackTrace();
+			            }
+			        }
+			    }
 		});
 	}
-
+	
+	 public static void sendMessage(String message) {
+	        try {
+	            writer.write(message);
+	            writer.newLine();
+	            writer.flush();
+	            emppn.getTxtarearequest().append("Me: " + message + "\n"); // Hiển thị tin nhắn gửi đi trên giao diện của client
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	/**
 	 * Create the frame.
 	 */
 	public MainPageView() {
+		
 		//em.SaveInforEmployee();
 	   super("Design Company V1");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -585,6 +649,10 @@ private JPasswordField tfpasswordlogin;
 	       tfpasswordlogin.setFont(new Font("Segoe UI Variable", Font.BOLD, 16));
 	       tfpasswordlogin.setBounds(161, 64, 365, 31);
 	       panel_1.add(tfpasswordlogin);
+	       
+	       JButton btnqr = new JButton("QR SCAN");
+	       btnqr.setBounds(44, 151, 122, 45);
+	       panel_1.add(btnqr);
 	        lbeye.addMouseListener(new MouseListener() {
 				
 				@Override
@@ -694,14 +762,28 @@ private JPasswordField tfpasswordlogin;
 	    	   /// Login 
 	        btnNewButton.addActionListener(new ActionListener() {
 			
+			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				ResultSet rs = con.getembyusnameandpass(tfusernamelogin.getText(), tfpasswordlogin.getText());
+//				String hashedPassword = BCrypt.hashpw(tfpasswordlogin.getText(), BCrypt.gensalt());
+                ResultSet rsg = con.getpassword(tfusernamelogin.getText());
+                String passwordx = "";
+                boolean matched = false;
+                try {
+					while(rsg.next()) {
+						matched = BCrypt.checkpw(tfpasswordlogin.getText(), rsg.getString(1));
+						passwordx = rsg.getString(1);
+					}
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
+               
+				ResultSet rs = con.getembyusnameandpass(tfusernamelogin.getText(), passwordx);
 				try {
 					while(rs.next()) {
 					emppn.getTfusernamemain().setText(rs.getString(8));
-					emppn.getTfpasswordmain().setText(rs.getString(9));
+					emppn.getTfpasswordmain().setText(tfpasswordlogin.getText());
 					}
 				} catch (Exception e2) {
 					// TODO: handle exception
@@ -722,18 +804,22 @@ private JPasswordField tfpasswordlogin;
 						JOptionPane.showMessageDialog(LogIn, "Wrong username","Error",JOptionPane.ERROR_MESSAGE);
 					}
 					}
-					if(cbselectlogin.getItemAt(cbselectlogin.getSelectedIndex()).equals("Employee")) {
-						
-					if(emppn.getTfusernamemain().getText().equals("")||emppn.getTfpasswordmain().getText().equals("")) {
-						JOptionPane.showMessageDialog(LogIn, "Wrong password or username","Error",JOptionPane.ERROR_MESSAGE);
-						
-					}else {
-						emppn.setdata();
-						c1.show(contentPane, "employeePage");	
-						CardLayout c3 = (CardLayout)emppn.getPncardemployee().getLayout();
-						c3.show(emppn.getPncardemployee(), "pnaccount");
-					}
-					}
+//					 boolean matched = BCrypt.checkpw(emppn.getTfpasswordmain().getText(), hashedPassword);
+					 if(matched==true) {
+							if(cbselectlogin.getItemAt(cbselectlogin.getSelectedIndex()).equals("Employee")) {
+								
+								if(emppn.getTfusernamemain().getText().equals("")||emppn.getTfpasswordmain().getText().equals("")) {
+									JOptionPane.showMessageDialog(LogIn, "Wrong password or username","Error",JOptionPane.ERROR_MESSAGE);
+									
+								}else {
+									emppn.setdata();
+									c1.show(contentPane, "employeePage");	
+									CardLayout c3 = (CardLayout)emppn.getPncardemployee().getLayout();
+									c3.show(emppn.getPncardemployee(), "pnaccount");
+								}
+								}
+		                }
+				
 				}
 			}
 		});
@@ -808,6 +894,17 @@ private JPasswordField tfpasswordlogin;
 			tfusernamelogin.setText("Username");
 			CardLayout c2 = (CardLayout)HomePageMainCardCenter.getLayout();
 			c2.show(HomePageMainCardCenter, "cardLogin");
+		}
+	});
+	btnqr.addActionListener(new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			Camera cam = new Camera();
+			cam.setVisible(true);
+			Thread thread = new Thread(cam);
+			thread.start();
 		}
 	});
 	lbforgotpass.addMouseListener(new MouseListener() {
@@ -1223,7 +1320,7 @@ private JPasswordField tfpasswordlogin;
 				});
                
 	}
-	
+	 
 	 //put news into table news
     public void PutNews() {
     	  ResultSet rs = con.getNews();
@@ -1237,4 +1334,10 @@ private JPasswordField tfpasswordlogin;
 				// TODO: handle exception
 			}
     }
+ 
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
 }

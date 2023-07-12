@@ -52,21 +52,20 @@ public class dbcontroller {
 		}
 	   public dbcontroller() {
 		   // Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		  try {
-			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-		
 		   try {
-		       this.con = DriverManager.getConnection("jdbc:odbc:nothing","sc","123");
-		       this.stmt = con.createStatement();
-		                } catch (SQLException e) {
-		       // TODO Auto-generated catch block
-		       e.printStackTrace();
-		       System.out.println("Connection");
-		   }
-		  } catch (ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+	           Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+	           try {
+	               this.con = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-BDFP0NO\\SQLEXPRESS;databaseName=computermanagementdatabase;"+"portNumber=1433;encrypt=true;trustServerCertificate=true;sslProtocol=TLSv1.2","sc","1234");
+	               this.stmt = con.createStatement();
+	                        } catch (SQLException e) {
+	               // TODO Auto-generated catch block
+	               e.printStackTrace();
+	               System.out.println("Connection");
+	           }
+	       } catch (ClassNotFoundException e) {
+	           // TODO Auto-generated catch block
+	           e.printStackTrace();
+	       }
 } 
 	  public void setdataforlist1() {
 		  ResultSet rs = getyear();
@@ -121,6 +120,18 @@ public class dbcontroller {
 	   public ResultSet getembyusnameandpass(String username,String password) {
 		   ResultSet rs = null;
 		   String sql = "Select ID,FullName,Address,Gender,Position,Age,Avatar,Username,Password from Information where Username = '"+username+"' and Password = '"+password+"'";
+        try {
+			System.out.println(sql);
+			rs = stmt.executeQuery(sql);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}	   
+        return rs;
+	   }
+	   
+	   public ResultSet getpassword(String username) {
+		   ResultSet rs = null;
+		   String sql = "Select Password from Information where Username = '"+username+"'";
         try {
 			System.out.println(sql);
 			rs = stmt.executeQuery(sql);
@@ -446,6 +457,7 @@ public class dbcontroller {
 	  int id = employee.maxidemployee()+1;
 	   String sql = "insert into Information(ID,FullName,Address,Gender,Position,Age,Username,Password) values ('"+id+"','"+fullname+"','"+address+"','"+Gender+"','"+Position+"','"+age+"','"+username+"','"+password+"')";	
 	   try {
+		   System.out.println(sql);
 		stmt.executeUpdate(sql);
 	} catch (Exception e) {
 		// TODO: handle exception

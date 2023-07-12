@@ -24,5 +24,25 @@
 	<classpathentry kind="lib" path="E:/develop with dream/sqljdbc_11.2/enu/mssql-jdbc-11.2.1.jre17.jar"/>
 	<classpathentry kind="lib" path="jgoodies-forms-1.8.0.jar" sourcepath="jgoodies-forms-1.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="D:/java/ConnectionSQLSever/bin/connection/mssql-jdbc-11.2.1.jre17.jar"/>
+	<classpathentry kind="lib" path="E:/jBCrypt-0.4.3.jar"/>
+	<classpathentry kind="lib" path="E:/gson-2.10.1.jar"/>
+	<classpathentry kind="lib" path="E:/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="E:/activation-1.1.jar"/>
+	<classpathentry kind="lib" path="E:/mail-1.4.1.jar"/>
+	<classpathentry kind="lib" path="E:/simple-java-mail-1.8.jar"/>
+	<classpathentry kind="lib" path="E:/webcam-capture-0.3.12.jar"/>
+	<classpathentry kind="lib" path="E:/zxing-2.1.jar"/>
+	<classpathentry kind="lib" path="E:/jai-imageio-core-1.4.0.jar"/>
+	<classpathentry kind="lib" path="E:/javase-3.5.1.jar"/>
+	<classpathentry kind="lib" path="E:/jcommander-1.82.jar"/>
+	<classpathentry kind="lib" path="E:/bridj-0.7.0.jar"/>
+	<classpathentry kind="lib" path="E:/dx-1.7.jar"/>
+	<classpathentry kind="lib" path="E:/slf4j-api-1.7.2.jar"/>
+	<classpathentry kind="lib" path="E:/core-4.0.jar"/>
+	<classpathentry kind="lib" path="E:/log4j.jar"/>
+	<classpathentry kind="lib" path="E:/jackson-annotations-2.15.2.jar"/>
+	<classpathentry kind="lib" path="E:/jackson-core-2.15.2.jar"/>
+	<classpathentry kind="lib" path="E:/jackson-databind-2.15.2.jar"/>
+	<classpathentry kind="lib" path="E:/jsoup-1.16.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

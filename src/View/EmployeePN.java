@@ -5,6 +5,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
@@ -16,7 +17,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.awt.CardLayout;
 import javax.swing.border.EmptyBorder;
@@ -31,15 +36,33 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.mindrot.jbcrypt.BCrypt;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.orsoncharts.util.json.JSONArray;
+import com.orsoncharts.util.json.JSONObject;
+
 import Connection.dbcontroller;
+import model.Client;
+
 
 import javax.swing.JTextArea;
 
 public class EmployeePN extends JPanel {
-     private JMenuItem mntmLogOut;
+     protected static final String DISPOSE_ON_CLOSE = null;
+	private JMenuItem mntmLogOut;
      dbcontroller con = new dbcontroller();
      private File fi ;
-     private JPopupMenu popupMenu;
+     JTextArea txtarearequest;
+     public JTextArea getTxtarearequest() {
+		return txtarearequest;
+	}
+	public void setTxtarearequest(JTextArea txtarearequest) {
+		this.txtarearequest = txtarearequest;
+	}
+	private JPopupMenu popupMenu;
      private DefaultTableModel dtmall;
      private DefaultTableModel dtmstar;
      private DefaultTableModel dtmbin;
@@ -86,6 +109,7 @@ public class EmployeePN extends JPanel {
 		this.tfpasswordmain = tfpasswordmain;
 	}
 	private JTextField tfpasswordmain;
+	private JTextField mssfield;
 	public JMenuItem getMntmLogOut() {
 		return mntmLogOut;
 	}
@@ -234,13 +258,13 @@ public class EmployeePN extends JPanel {
 		
 		JButton btnEdit = new JButton("");
 		btnEdit.setIcon(new ImageIcon(EmployeePN.class.getResource("/img1/edit.png")));
-		btnEdit.setBounds(983, 500, 84, 47);
+		btnEdit.setBounds(864, 500, 84, 47);
 		panel_1.add(btnEdit);
 		
 		JButton btnSave = new JButton("");
 		btnSave.setIcon(new ImageIcon(EmployeePN.class.getResource("/img1/sv1.png")));
 		btnSave.setEnabled(false);
-		btnSave.setBounds(1106, 500, 84, 47);
+		btnSave.setBounds(958, 500, 84, 47);
 		panel_1.add(btnSave);
 		
 		JButton btnOpen = new JButton("");
@@ -284,6 +308,24 @@ public class EmployeePN extends JPanel {
 		tfpasswordmain.setColumns(10);
 		tfpasswordmain.setBounds(172, 447, 475, 40);
 		panel_1.add(tfpasswordmain);
+		
+		JButton btnxuatfile = new JButton("XUẤT FILE JSON");
+		btnxuatfile.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		btnxuatfile.setBounds(1052, 500, 133, 46);
+		panel_1.add(btnxuatfile);
+		
+		JButton btndocfile = new JButton("ĐỌC FILE JSON");
+		btndocfile.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		btndocfile.setBounds(1195, 500, 133, 46);
+		panel_1.add(btndocfile);
+		
+		JButton buttonsendemail = new JButton("SEND EMAIL");
+		buttonsendemail.setBounds(886, 557, 221, 47);
+		panel_1.add(buttonsendemail);
+		
+		JButton btncraw = new JButton("CRAW NEWS FROM WEBSITE");
+		btncraw.setBounds(1124, 556, 178, 47);
+		panel_1.add(btncraw);
 		
 		JPanel pnsalary = new JPanel();
 		pnsalary.setBackground(new Color(240, 248, 255));
@@ -449,9 +491,9 @@ public class EmployeePN extends JPanel {
 		lblNewLabel_3.setBounds(28, 23, 148, 42);
 		panel_6.add(lblNewLabel_3);
 		
-		JTextArea txtarearequest = new JTextArea();
+		 txtarearequest = new JTextArea();
 		txtarearequest.setBackground(new Color(248, 248, 255));
-		txtarearequest.setBounds(186, 23, 1078, 412);
+		txtarearequest.setBounds(309, 23, 955, 412);
 		panel_6.add(txtarearequest);
 		
 		JLabel lblNewLabel_3_1 = new JLabel("To : ");
@@ -481,6 +523,17 @@ public class EmployeePN extends JPanel {
 		btnsubmitrequest.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 20));
 		btnsubmitrequest.setBounds(747, 503, 180, 42);
 		panel_6.add(btnsubmitrequest);
+		
+		JButton buttonmessenger = new JButton("SEND");
+		buttonmessenger.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		buttonmessenger.setIcon(new ImageIcon(EmployeePN.class.getResource("/img1/request.png")));
+		buttonmessenger.setBounds(88, 170, 137, 57);
+		panel_6.add(buttonmessenger);
+		
+		mssfield = new JTextField();
+		mssfield.setBounds(29, 95, 259, 42);
+		panel_6.add(mssfield);
+		mssfield.setColumns(10);
 		popupMenu = new JPopupMenu();
 		popupMenu.setBounds(0, 0, 100, 16);
 		
@@ -712,7 +765,15 @@ public class EmployeePN extends JPanel {
 			}
 		}
 	});
-
+btncraw.addActionListener(new ActionListener() {
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		 WebCrawler frame = new WebCrawler();
+	        frame.setVisible(true);
+	}
+});
 	btnsubmitrequest.addActionListener(new ActionListener() {
 		
 		@Override
@@ -731,9 +792,80 @@ public class EmployeePN extends JPanel {
 			}
 		}
 	});
+	btnxuatfile.addActionListener(new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			xuatjson(tffullnameinaccountpage.getText(), tfageinaccountpage.getText(), tfpositioninaccountpage.getText(), tfaddressinaccountpage.getText(), tfgenderinaccountpage.getText(), tfusernamemain.getText(), tfpasswordmain.getText());
+		}
+	});
+	buttonmessenger.addActionListener(new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		MainPageView.sendMessage(mssfield.getText());
+		}
+	});
+	btndocfile.addActionListener(new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			viewjs jview = new viewjs();
+		System.out.println(tfusernamemain.getText());
+
+	        try (BufferedReader reader = new BufferedReader(new FileReader(tfusernamemain.getText()+".json"))) {
+	            Gson gson = new Gson();
+	            JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+	            String fullname = jsonObject.get("fullname").getAsString();
+	            String address = jsonObject.get("address").getAsString();
+	            int age = jsonObject.get("age").getAsInt();
+	            String gender = jsonObject.get("gender").getAsString();
+	            String position = jsonObject.get("position").getAsString();
+	            String password = jsonObject.get("password").getAsString();
+	            String username = jsonObject.get("username").getAsString();
+	            jview.getTffullname().setText(fullname);
+	            jview.getTfage().setText(""+age);
+	            jview.getTfaddress().setText(address);
+	            jview.getTfgender().setText(gender);
+	            jview.getTfusername().setText(username);
+	            jview.getTfpassword().setText(password);
+	            jview.getTfposition().setText(position);
+	        } catch (IOException e1) {
+	            e1.printStackTrace();
+	        }
+			jview.setVisible(true);
+			
+			
+		}
+	});
+	buttonsendemail.addActionListener(new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			EmailSenderGUI g = new EmailSenderGUI();
+			g.setVisible(true);
+		}
+	});
 	}
+	
 	public void setdata() {
-		ResultSet rs = con.getembyusnameandpass(tfusernamemain.getText(), tfpasswordmain.getText());
+		 ResultSet rsg = con.getpassword(tfusernamemain.getText());
+         String passwordx = "";
+         boolean matched = false;
+         try {
+				while(rsg.next()) {
+					matched = BCrypt.checkpw(tfpasswordmain.getText(), rsg.getString(1));
+					passwordx = rsg.getString(1);
+				}
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		ResultSet rs = con.getembyusnameandpass(tfusernamemain.getText(), passwordx);
 		try {
 			while(rs.next()) {
 				tfidinaccountpage.setText(rs.getString(1));
@@ -844,5 +976,22 @@ public class EmployeePN extends JPanel {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+	}
+	public static void xuatjson(String fullname,String age,String position, String address, String gender, String username, String password ) {
+		 String filename = username + ".json";
+	        try (FileWriter writer = new FileWriter(filename)) {
+	            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	            JsonObject jsonObject = new JsonObject();
+	            jsonObject.addProperty("fullname", fullname);
+	            jsonObject.addProperty("address", address);
+	            jsonObject.addProperty("age", age);
+	            jsonObject.addProperty("gender", gender);
+	            jsonObject.addProperty("position", position);
+	            jsonObject.addProperty("password", password);
+	            jsonObject.addProperty("username", username);
+	            gson.toJson(jsonObject, writer);
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
 	}
 }

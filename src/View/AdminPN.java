@@ -1,6 +1,7 @@
 package View;
 
 import javax.swing.JPanel;
+import org.mindrot.jbcrypt.BCrypt;
 import javax.swing.JPopupMenu;
 
 import java.awt.Color;
@@ -221,6 +222,7 @@ public void setMnlogout(JMenu mnlogout) {
 		cpn.setBounds(0, 0, 1500, 500);
 		
 		pncardHomeadmin.add(cpn);
+		
 		
 		JPanel pnDetailsadmin = new JPanel();
 		pnDetailsadmin.setBackground(new Color(255, 204, 255));
@@ -1158,7 +1160,8 @@ public void setMnlogout(JMenu mnlogout) {
 						
 						int resultt = JOptionPane.showConfirmDialog(pncardadeemployee, "Add this employee","Confirm",JOptionPane.YES_NO_OPTION);
 						if(resultt==JOptionPane.YES_OPTION) {
-				con.addnewemployee(tffullnameemployee.getText(),tfaddressemployee.getText(), ""+cbbgender.getItemAt(cbbgender.getSelectedIndex()),""+cbbposition.getItemAt(cbbposition.getSelectedIndex()), Integer.parseInt(tfage.getText()),tfusername.getText(),tfpassword.getText());
+							 String hashedPassword = BCrypt.hashpw(tfpassword.getText(), BCrypt.gensalt());
+				con.addnewemployee(tffullnameemployee.getText(),tfaddressemployee.getText(), ""+cbbgender.getItemAt(cbbgender.getSelectedIndex()),""+cbbposition.getItemAt(cbbposition.getSelectedIndex()), Integer.parseInt(tfage.getText()),tfusername.getText(),hashedPassword);
 			    dtm.addRow(new String[] {a+"",tffullnameemployee.getText(),tfaddressemployee.getText(),""+cbbgender.getItemAt(cbbgender.getSelectedIndex()),""+cbbposition.getItemAt(cbbposition.getSelectedIndex()),tfage.getText(),tfusername.getText(),tfpassword.getText()}  );
 				}
 				}else {
