@@ -44,7 +44,7 @@ public class Server {
             for (ClientHandler client : clients) {
                 if (client != sender) {
                 	
-                	sender.setName(empp.getTfusernamemain().getText());
+//                	sender.setName(empp.getTfusernamemain().getText());
                     client.getWriter().write(sender.getName() + ": " + message);
                     client.getWriter().newLine();
                     client.getWriter().flush();

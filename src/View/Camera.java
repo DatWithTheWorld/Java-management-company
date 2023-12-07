@@ -63,7 +63,7 @@ public class Camera extends JFrame implements Runnable, ThreadFactory {
     public Camera() {
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 703, 533);
+        setBounds(100, 100, 530, 360);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -72,7 +72,7 @@ public class Camera extends JFrame implements Runnable, ThreadFactory {
 
         panelcamera = new JPanel();
         panelcamera.setLayout(null);
-        panelcamera.setBounds(10, 10, 703, 476);
+        panelcamera.setBounds(10, 10, 700, 400);
         contentPane.add(panelcamera);
         initWebcam();
     }
@@ -110,7 +110,7 @@ public class Camera extends JFrame implements Runnable, ThreadFactory {
             if (result != null) {
                MainPageView.getTfpasswordlogin().setText(result.getText());
                 System.out.println(result.getText());
-                break;
+              
             }
         }
     }

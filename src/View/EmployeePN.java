@@ -584,11 +584,13 @@ public class EmployeePN extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				setdatafordtm();
 				tfsalaryemployeemonth.setText("");
 				tfsalaryemployeesalary.setText("");
 				tfsalaryemployeeyear.setText("");
 				tfsearchinsalaryemployee.setText("");
 				dtm.setRowCount(0);
+				setdatafordtm();
 				CardLayout c1 = (CardLayout)pncardemployee.getLayout();
 				c1.show(pncardemployee, "pnsalary");
 			}

@@ -1160,7 +1160,9 @@ public void setMnlogout(JMenu mnlogout) {
 						
 						int resultt = JOptionPane.showConfirmDialog(pncardadeemployee, "Add this employee","Confirm",JOptionPane.YES_NO_OPTION);
 						if(resultt==JOptionPane.YES_OPTION) {
+							//hash pass 
 							 String hashedPassword = BCrypt.hashpw(tfpassword.getText(), BCrypt.gensalt());
+							 
 				con.addnewemployee(tffullnameemployee.getText(),tfaddressemployee.getText(), ""+cbbgender.getItemAt(cbbgender.getSelectedIndex()),""+cbbposition.getItemAt(cbbposition.getSelectedIndex()), Integer.parseInt(tfage.getText()),tfusername.getText(),hashedPassword);
 			    dtm.addRow(new String[] {a+"",tffullnameemployee.getText(),tfaddressemployee.getText(),""+cbbgender.getItemAt(cbbgender.getSelectedIndex()),""+cbbposition.getItemAt(cbbposition.getSelectedIndex()),tfage.getText(),tfusername.getText(),tfpassword.getText()}  );
 				}
