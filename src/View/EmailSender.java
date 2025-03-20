@@ -6,9 +6,9 @@ import java.util.Properties;
 
 public class EmailSender {
     public static void main(String[] args) {
-        String to = "hoattc.22ite@vku.udn.vn";
-        String from = "datnd.22git@vku.udn.vn";
-        String password = "nguyenducdat14140404";
+        String to = "mail";
+        String from = "yourmail";
+        String password = "yourpass";
         String host = "smtp.gmail.com";
         String subject = "Test email";
         String body = "This is a test email.";
