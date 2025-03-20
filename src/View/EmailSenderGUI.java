@@ -100,8 +100,8 @@ public class EmailSenderGUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Please enter all required information.");
                 return;
             }
-            String from = "datnd.22git@vku.udn.vn";
-            String password = "nguyenducdat14140404";
+            String from = "yourmail";
+            String password = "yourpass";
             String host = "smtp.gmail.com";
             Properties properties = System.getProperties();
             properties.setProperty("mail.smtp.host", host);
